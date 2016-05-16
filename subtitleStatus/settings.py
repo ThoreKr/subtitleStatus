@@ -10,7 +10,6 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-import configparser
 import string
 from django.utils.crypto import get_random_string
 from account.settings import *
@@ -19,13 +18,12 @@ SITE_ID = 1
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 PROJECT_ROOT = BASE_DIR
 
-TEMPLATE_DIRS = [PROJECT_ROOT+'/templates']
-
-config = configparser.RawConfigParser()
-config.read([os.path.join(os.path.dirname(__file__), 'subtitleStatus.cfg'), '/etc/billing/subtitleStatus.cfg',
-            os.path.expanduser('~/.subtitleStatus.cfg'),
-            os.environ.get('SUBTITLESTATUS_CONFIG', 'subtitleStatus.cfg')],
-            encoding='utf-8')
+TEMPLATES = [
+    {'BACKEND': 'django.template.backends.django.DjangoTemplates',
+     'APP_DIRS': True,
+     'OPTIONS': {'debug': False,},
+    },
+]
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
@@ -47,8 +45,6 @@ else:
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
-
-TEMPLATE_DEBUG = False
 
 ALLOWED_HOSTS = ['subtitles.media.ccc.de', 'c3subtitles.de']
 
