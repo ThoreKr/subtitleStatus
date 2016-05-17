@@ -54,6 +54,9 @@ class Event(BasisModell):
             savedXML = f.read()
             return savedXML == xmlFile.data
 
+    def get_absolute_url(self):
+        return reverse('event', args=[self.acronym])
+
 
     # Create Entries in Statistics_Event model for any available combination
     def create_statistics_event_entries(self):
@@ -497,7 +500,7 @@ class Talk(BasisModell):
             return None
 
     def get_absolute_url(self):
-        return reverse('www.views.talk', args=[str(self.id)])
+        return reverse('talk', args=[str(self.id)])
 
     @property
     def has_statistics(self):
