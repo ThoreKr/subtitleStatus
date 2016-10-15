@@ -7,3 +7,4 @@ psycopg2
 simplejson
 lxml
 twitter
+factory_boy
