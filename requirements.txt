@@ -8,3 +8,4 @@ simplejson
 lxml
 twitter
 factory_boy
+pysftp
