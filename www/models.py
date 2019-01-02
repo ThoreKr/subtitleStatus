@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from datetime import datetime, timezone, timedelta
-from django.db import models
+from datetime import datetime, time, timezone, timedelta
+from django.db import models, transaction
 from django.db.models import Sum, Q
-from django.core.urlresolvers import reverse
-from django.db import transaction
+from django.urls import reverse
 from .statistics_helper import *
 import json
 import credentials as cred
@@ -268,7 +267,7 @@ class Speaker(BasisModell):
 
 # Links from the Fahrplan
 class Speaker_Links(BasisModell):
-    speaker = models.ForeignKey(Speaker, blank = True)
+    speaker = models.ForeignKey(Speaker, blank = True, on_delete=models.CASCADE)
     title = models.CharField(max_length = 200, default = "", blank = True)
     url = models.URLField(blank = True)
 
@@ -329,7 +328,7 @@ class Talk(BasisModell):
     n_most_frequent_words = models.TextField(default = "{}")    # n most common words as json string
     n_most_frequent_words_speakers = models.TextField(default = "{}")    # n most common words as json string
     has_priority = models.BooleanField(default = False)                 # If the talk has priority because it was requested by someone
-    transcript_by = models.ForeignKey(Transcript, default = 0)      # Where is the Transcript from? Handmade, None, Youtube, Trint, Scribie...
+    transcript_by = models.ForeignKey(Transcript, default = 0, on_delete=models.CASCADE)      # Where is the Transcript from? Handmade, None, Youtube, Trint, Scribie...
     amara_activity_last_checked = models.DateTimeField(default = datetime.min, blank = True)        # Light check, only amara activity
     amara_update_interval = models.TimeField(default = "00:10", blank = True) # How often is activity checked?
     amara_complete_update_last_checked = models.DateTimeField(default = datetime.min, blank = True) # Everything checked, activity and data of every single subtitle
@@ -1073,8 +1072,8 @@ class Links(BasisModell):
 # These datasets have to be collected by "hand", they can not be auto created
 # speaker, talk, start and end need to be entered manually
 class Statistics_Raw_Data(BasisModell):
-    speaker = models.ForeignKey(Speaker)
-    talk = models.ForeignKey(Talk)
+    speaker = models.ForeignKey(Speaker, on_delete=models.CASCADE)
+    talk = models.ForeignKey(Talk, on_delete=models.CASCADE)
     start = models.TimeField(blank = True, null = True)
     end = models.TimeField(blank = True, null = True)
     time_delta = models.FloatField(blank = True, null = True) # only seconds!
@@ -1120,8 +1119,8 @@ class Statistics_Raw_Data(BasisModell):
 # This is calculated from the Statistics_Raw_Data which only counts the actual time the speaker speaks
 # The subtitle must be finished or in review
 class Statistics_Speaker(BasisModell):
-    speaker = models.ForeignKey(Speaker)
-    language = models.ForeignKey(Language)
+    speaker = models.ForeignKey(Speaker, on_delete=models.CASCADE)
+    language = models.ForeignKey(Language, on_delete=models.CASCADE)
     words = models.IntegerField(blank = True, null = True)      # All words from this speaker in this language summed up
     strokes = models.IntegerField(blank = True, null = True)    # All strokes from this speaker in this language summed up
     time_delta = models.FloatField(blank = True, null = True)   # Summed up time deltas from this speaker in this language
@@ -1196,8 +1195,8 @@ class Statistics_Speaker(BasisModell):
 # The statistics applies to whole talk-time, not only the speakers time, it
 # includes breaks, and Q&A and other stuff
 class Statistics_Event(BasisModell):
-    event = models.ForeignKey(Event)
-    language = models.ForeignKey(Language)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    language = models.ForeignKey(Language, on_delete=models.CASCADE)
     words = models.IntegerField(blank = True, null = True)  # Summed up from finished / in review whole talks, not only speakers time
     strokes = models.IntegerField(blank = True, null = True)    # Calculated from finished / in review whole talks, not only speakers time
     time_delta = models.FloatField(blank = True, null = True)   # Seconds of all talks from this event which are in review or finished
@@ -1264,8 +1263,8 @@ class Statistics_Event(BasisModell):
 
 # m:n Connection between Talks and Speakers and their Statistics data
 class Talk_Persons(BasisModell):
-    talk = models.ForeignKey(Talk)
-    speaker = models.ForeignKey(Speaker)
+    talk = models.ForeignKey(Talk, on_delete=models.CASCADE)
+    speaker = models.ForeignKey(Speaker, on_delete=models.CASCADE)
     words = models.IntegerField(blank = True, null = True)      # All words from this speaker in this talk summed up
     strokes = models.IntegerField(blank = True, null = True)    # All strokes from this speaker in this talk summed up
     time_delta = models.FloatField(blank = True, null = True)   # Summed up time deltas from this speaker in this talk

@@ -1,9 +1,7 @@
-django < 1.10
+django
 django-bootstrap-form
 django-extensions
-git+https://github.com/mmarx/django-urlauth.git@fix-django-1.8#egg=django-urlauth
-git+https://github.com/mmarx/django-account.git@fix-url-namespace#egg=django-account
-psycopg2
+psycopg2-binary
 simplejson
 lxml
 twitter
