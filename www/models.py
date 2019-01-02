@@ -7,7 +7,6 @@ from django.urls import reverse
 from django.utils.timezone import make_aware
 from .statistics_helper import *
 import json
-import credentials as cred
 
 
 # Basic model which provides a field for the creation and the last change timestamp
@@ -639,6 +638,7 @@ class Talk(BasisModell):
             # The json result from amara includes a "next" field which has the url for the next query if not
             # all results came with the first query
             while url != None:
+                import credentials as cred
                 r = requests.get(url, headers = cred.AMARA_HEADER, params = parameters)
                 #print(r.text)
                 # If amara doesn't reply with a valid json create one.
@@ -697,6 +697,7 @@ class Talk(BasisModell):
         if force or self.needs_complete_amara_update:
             url = "https://amara.org/api/videos/" + self.amara_key + "/languages/?format=json"
             import requests
+            import credentials as cred
             r = requests.get(url, headers = cred.AMARA_HEADER)
             activities = json.loads(r.text)
             for any_subtitle in activities["objects"]:
