@@ -4,6 +4,7 @@ from datetime import datetime, time, timezone, timedelta
 from django.db import models, transaction
 from django.db.models import Sum, Q
 from django.urls import reverse
+from django.utils.timezone import make_aware
 from .statistics_helper import *
 import json
 import credentials as cred
@@ -329,11 +330,11 @@ class Talk(BasisModell):
     n_most_frequent_words_speakers = models.TextField(default = "{}")    # n most common words as json string
     has_priority = models.BooleanField(default = False)                 # If the talk has priority because it was requested by someone
     transcript_by = models.ForeignKey(Transcript, default = 0, on_delete=models.CASCADE)      # Where is the Transcript from? Handmade, None, Youtube, Trint, Scribie...
-    amara_activity_last_checked = models.DateTimeField(default = datetime.min, blank = True)        # Light check, only amara activity
+    amara_activity_last_checked = models.DateTimeField(default=make_aware(datetime.min), blank=True)        # Light check, only amara activity
     amara_update_interval = models.TimeField(default = "00:10", blank = True) # How often is activity checked?
-    amara_complete_update_last_checked = models.DateTimeField(default = datetime.min, blank = True) # Everything checked, activity and data of every single subtitle
+    amara_complete_update_last_checked = models.DateTimeField(default=make_aware(datetime.min), blank=True) # Everything checked, activity and data of every single subtitle
     needs_complete_amara_update = models.BooleanField(default = False)
-    next_amara_activity_check = models.DateTimeField(default = datetime.min, blank = True)
+    next_amara_activity_check = models.DateTimeField(default=make_aware(datetime.min), blank=True)
 
     # Recalculate statistics data over the whole talk
     @transaction.atomic
