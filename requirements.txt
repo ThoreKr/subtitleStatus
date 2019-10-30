@@ -1,0 +1,9 @@
+django
+django-bootstrap-form
+django-extensions
+psycopg2-binary
+simplejson
+lxml
+twitter
+factory_boy
+pysftp

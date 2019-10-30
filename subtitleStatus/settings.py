@@ -14,15 +14,31 @@ import configparser
 import string
 from django.utils.crypto import get_random_string
 
+SITE_ID = 1
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 PROJECT_ROOT = BASE_DIR
 
-TEMPLATE_DIRS = [PROJECT_ROOT+'/templates']
+TEMPLATES = [
+    {'BACKEND': 'django.template.backends.django.DjangoTemplates',
+     'APP_DIRS': True,
+     'OPTIONS': {'debug': False,
+                 'context_processors': [
+                     'django.contrib.auth.context_processors.auth',
+                     'django.template.context_processors.debug',
+                     'django.template.context_processors.i18n',
+                     'django.template.context_processors.media',
+                     'django.template.context_processors.static',
+                     'django.template.context_processors.tz',
+                     'django.contrib.messages.context_processors.messages',
+                ],
+     },
+    },
+]
 
 config = configparser.RawConfigParser()
-config.read([os.path.join(os.path.dirname(__file__), 'subtitleStatus.cfg'), '/etc/billing/subtitleStatus.cfg',
-            os.path.expanduser('~/.subtitleStatus.cfg'),
-            os.environ.get('SUBTITLESTATUS_CONFIG', 'subtitleStatus.cfg')],
+config.read([os.path.join(os.path.dirname(__file__), 'subtitleStatus.cfg'),
+             os.path.expanduser('~/.subtitleStatus.cfg'),
+             os.environ.get('SUBTITLESTATUS_CONFIG', 'subtitleStatus.cfg')],
             encoding='utf-8')
 
 # Quick-start development settings - unsuitable for production
@@ -46,10 +62,10 @@ else:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-TEMPLATE_DEBUG = False
-
 ALLOWED_HOSTS = ['subtitles.media.ccc.de', 'c3subtitles.de']
 
+# Redirect after login
+LOGIN_REDIRECT_URL = '/'
 
 # Application definition
 
@@ -60,27 +76,30 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     'bootstrapform',
-    'account',
     'www',
-    'frab',
-    'unisubs',
     'django_extensions',
     'subtitleStatus',
 )
 
-MIDDLEWARE_CLASSES = (
-    'django.contrib.sessions.middleware.SessionMiddleware',
+MIDDLEWARE = (
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
 ROOT_URLCONF = 'subtitleStatus.urls'
 
 WSGI_APPLICATION = 'subtitleStatus.wsgi.application'
+
+MEDIA_URL = 'static/'
+MEDIA_ROOT = 'static'
+
+LOGIN_REDIRECT_URL = '/'
 
 
 # Database
@@ -115,6 +134,7 @@ elif config.get('sql', 'type').lower() == 'mysql':
 else:
     raise ValueError('invalid database type "%s"' % config.get('sql', 'type').lower())
 
+
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
 
@@ -139,3 +159,8 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     )
+
+try:
+    from .local_settings import *
+except ImportError:
+    pass

@@ -49,7 +49,6 @@ coverage.xml
 *.log
 *.pot
 /static/*
-www/migrations/
 www/static/
 subtitleStatus/settings.py
 
@@ -60,6 +59,7 @@ docs/_build/
 # Django
 virtualEnv/
 subtitleStatus/settings.py
+subtitleStatus/local_settings.py
 
 # Downloadsfolder
 downloads/*.sbv
@@ -72,6 +72,7 @@ barbara-temp/
 
 # Credentials files
 credentials.py
+
 
 # Stuff
 temp.py
@@ -92,3 +93,7 @@ subtitles_sync_folder
 subtitles_sync_folder/*
 subtitleStatus/subtitleStauts.cfg
 .secret
+
+# temporaries
+*~
+flycheck_*.py

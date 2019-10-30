@@ -8,9 +8,9 @@
 
 <div class="collapse" id="{{ my_event.pk }}_id">
 {% if my_event.has_statistics %}
-    {% include "www/progress_bar_original.html" with value=my_event %}
+    {% include "progress_bar_original.html" with value=my_event %}
 {% endif %}
-    
+
 {% for every_statistics in my_event.statistics_event_set.all %}
     {% if every_statistics.has_statistics %}
 		<div id="event_statistics" style="padding-bottom: 20px;" class="container">
@@ -30,7 +30,7 @@
     {% endif %}
 {% endfor %}
 </div>
-{% include "www/progress_bar_original.html" with value=my_event %}
+{% include "progress_bar_original.html" with value=my_event %}
 
 <div class="btn-group" role="group" aria-label="Filter by event day">
     {% for day in my_event.event_days_set.all %}
@@ -51,7 +51,7 @@
 		<div class="row">
 			{% for every_talk in talks_line %}
 				<div class="col-md-4">
-					{% include "www/talk_small.html" with talk=every_talk %}
+					{% include "talk_small.html" with talk=every_talk %}
 				</div>
 			{% endfor %}
 		</div>

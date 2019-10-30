@@ -18,16 +18,16 @@
             <p><a class="btn btn-primary btn-lg" href="https://mirror.selfnet.de/c3subtitles/" role="button" target="_blank">Selfnet mirror »</a></p>
             <p>Choose an event and you will find the subtitles!</p>
             <p>Like what we do? Flattr us!<p>
-            {% include "www/flattr.html" with opacity=1.0 %}
-        </div>
-        <div class="col-md-4">
-            <p>Twitter</p>
-            <p><a class="btn btn-primary btn-lg" href="https://www.twitter.com/c3subtitles" role="button" target="_blank">@c3subtitles »</a></p>
-            <p>Newest infos on twitter or visit us in <a href="https://webirc.hackint.org/#irc://hackint.org/#subtitles" target="_blank">#subtitles on hackint.org</a><br /></p>
-                <p>Latest releases:</p>
-                <p><a class="btn btn-primary btn-lg" href="https://www.twitter.com/c3srt_releases" role="button" target="_blank">@c3srt_releases »</a></p>
-        </div>
-    </div>
+            {% include "flattr.html" with opacity=1.0 %}
+		</div>
+		<div class="col-md-4">
+			<p>Twitter</p>
+			<p><a class="btn btn-primary btn-lg" href="https://www.twitter.com/c3subtitles" role="button" target="_blank">@c3subtitles »</a></p>
+			<p>Newest infos on twitter or visit us in <a href="https://webirc.hackint.org/#subtitles" target="_blank">#subtitles on hackint.org</a><br /><a href="https://webirc.hackint.org/#subtitles-angel" target="_blank">#subtitles-angel on hackint.org</a></p>
+				<p>Latest releases:</p>
+				<p><a class="btn btn-primary btn-lg" href="https://www.twitter.com/c3srt_releases" role="button" target="_blank">@c3srt_releases »</a></p>
+		</div>
+	</div>
 </div>
 
 <div>
@@ -64,12 +64,12 @@
                 {% endfor %}
                 </div>
             </div>
-        {% endif %}
-    </div>
-    <div>
-    {% include "www/progress_bar_original.html" with value=event %}
-    </div>
-    {% endif %}
+		{% endif %}
+	</div>
+	<div>
+	{% include "progress_bar_original.html" with value=event %}
+	</div>
+	{% endif %}
 {% endfor %}
 
 </div>
