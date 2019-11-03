@@ -49,7 +49,7 @@ class Event(BasisModell):
     cdn_subtitles_root_folder = models.URLField(default = "", blank = True)
     subfolder_in_sync_folder = models.CharField(max_length = 100, default = "", blank = True) # For the rsync to the selfnet mirror, no slashes at the beginning and end
 
-    def isDifferent(id, xmlFile):
+    def isDifferent(self, id, xmlFile):
         with open("data/eventxml/{}.xml".format(id),'rb') as f:
             savedXML = f.read()
             return savedXML == xmlFile.data
