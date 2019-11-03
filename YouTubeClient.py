@@ -2,6 +2,7 @@
 """
 
 import os
+import datetime
 
 import httplib2
 from apiclient.discovery import build
@@ -9,6 +10,9 @@ from apiclient.http import MediaFileUpload
 
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.file import Storage
+from oauth2client.tools import run_flow
+
+from isodate import parse_duration
 
 
 class UploadError(Exception):
@@ -22,7 +26,9 @@ class YouTubeClient:
     """
     # This OAuth 2.0 access scope allows an application to upload files to the
     # authenticated user's YouTube channel, but doesn't allow other types of access.
-    YOUTUBE_UPLOAD_SCOPE = "https://www.googleapis.com/auth/youtube.upload"
+    SCOPES = ["https://www.googleapis.com/auth/youtube.upload", "https://www.googleapis.com/auth/youtube.readonly", "https://www.googleapis.com/auth/youtube.force-ssl"]
+
+
     YOUTUBE_API_SERVICE_NAME = "youtube"
     YOUTUBE_API_VERSION = "v3"
 
@@ -49,13 +55,13 @@ class YouTubeClient:
         Keyword Arguments:
             secrets_path {str} -- Path to the google api client secrets (default: {'client_secrets.json'})
         """
-        flow_from_clientsecrets(secrets_path, scope=self.YOUTUBE_UPLOAD_SCOPE, message=self.MISSING_CLIENT_SECRETS_MESSAGE)
+        flow = flow_from_clientsecrets(secrets_path, scope=self.SCOPES, message=self.MISSING_CLIENT_SECRETS_MESSAGE)
 
         self.storage = Storage("ytc-oauth2.json")
         credentials = self.storage.get()
 
         if credentials is None or credentials.invalid:
-            raise ValueError('No client secret specified')
+            credentials = run_flow(flow, self.storage)
 
         self.credentials = credentials
 
@@ -105,3 +111,57 @@ class YouTubeClient:
             raise UploadError
         except:
             raise UploadError
+
+    def getVideoLength(self, video_id: str) -> datetime.timedelta:
+        """Get the length of a youtube video
+
+        Arguments:
+            video_id {str} -- YT key of the video
+
+        Returns:
+            datetime.timedelta -- Length of the video as timedelta object
+        """
+        request = self.client.videos().list(
+            part="snippet,contentDetails,statistics",
+            id=video_id
+        )
+        response = request.execute()
+
+        duration = response['items'][0]['contentDetails']['duration']
+
+        return parse_duration(duration)
+
+    def uploadCaption(self, video_id: str, caption_path: str, language: str, caption_name: str, sync=True, draft=True):
+        """Add captions to a youtube video
+
+        see https://developers.google.com/youtube/v3/docs/captions/insert
+
+        Arguments:
+            video_id {str} -- YT video key
+            caption_path {str} -- Path to captions file
+            language {str} -- Language shorthand for the given captions
+            caption_name {str} -- Description to be shown for this captions
+
+        Keyword Arguments:
+            sync {bool} -- Should this upload be auto-synced (default: {True})
+            draft {bool} -- Should this be uploaded as draft (default: {True})
+
+        Returns:
+            Unknown -- Response from YouTube
+        """
+        request = self.client.captions().insert(
+            part="snippet",
+            sync=sync,
+            body={
+                "snippet": {
+                    "language": language,
+                    "name": caption_name,
+                    "videoId": video_id,
+                    "isDraft": draft
+                }
+            },
+
+            media_body=MediaFileUpload(caption_path)
+        )
+        response = request.execute()
+        return response

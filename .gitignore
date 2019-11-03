@@ -93,7 +93,8 @@ subtitles_sync_folder
 subtitles_sync_folder/*
 subtitleStatus/subtitleStauts.cfg
 .secret
-
+client_secrets.json
+ytc-oauth2.json
 # temporaries
 *~
 flycheck_*.py
