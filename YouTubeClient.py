@@ -1,18 +1,17 @@
 """This file provides a client to interact with youtube, trying to abstract their garbage API
 """
 
-import os
 import datetime
+import io
+import os
 
 import httplib2
 from apiclient.discovery import build
-from apiclient.http import MediaFileUpload
-
+from apiclient.http import MediaFileUpload, MediaIoBaseDownload
+from isodate import parse_duration
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.file import Storage
 from oauth2client.tools import run_flow
-
-from isodate import parse_duration
 
 
 class UploadError(Exception):
@@ -165,3 +164,23 @@ class YouTubeClient:
         )
         response = request.execute()
         return response
+
+    def downloadCaption(self, caption_id: str, target_path: str):
+        """Download a given caption from youtube
+
+        see: https://developers.google.com/youtube/v3/docs/captions/download
+
+        Arguments:
+            caption_id {str} -- YT ID assigned to the requested caption
+            target_path {str} -- path to save captions to
+        """
+        request = self.client.captions().download(
+            id=caption_id
+        )
+
+
+        with io.FileIO(target_path, "wb") as fh:
+            download = MediaIoBaseDownload(fh, request)
+            complete = False
+            while not complete:
+                status, complete = download.next_chunk()
